@@ -81,12 +81,12 @@ public class Rpc implements Closeable {
     /**
      * Creates an RPC client for a server running on the given remote host and port.
      *
-     * @param config     RPC configuration data.
-     * @param eloop      Event loop for managing the connection.
-     * @param host       Host name or IP address to connect to.
-     * @param port       Port where server is listening.
-     * @param clientId   The client ID that identifies the connection.
-     * @param secret     Secret for authenticating the client with the server.
+     * @param config RPC configuration data.
+     * @param eloop Event loop for managing the connection.
+     * @param host Host name or IP address to connect to.
+     * @param port Port where server is listening.
+     * @param clientId The client ID that identifies the connection.
+     * @param secret Secret for authenticating the client with the server.
      * @param dispatcher Dispatcher used to handle RPC calls.
      * @return A future that can be used to monitor the creation of the RPC object.
      */
@@ -103,8 +103,7 @@ public class Rpc implements Closeable {
 
         final ChannelFuture cf = new Bootstrap()
                 .group(eloop)
-                .handler(new ChannelInboundHandlerAdapter() {
-                })
+                .handler(new ChannelInboundHandlerAdapter() { })
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeoutMs)
@@ -267,7 +266,7 @@ public class Rpc implements Closeable {
      * Send an RPC call to the remote endpoint and returns a future that can be used to monitor the
      * operation.
      *
-     * @param msg     RPC call to send.
+     * @param msg RPC call to send.
      * @param retType Type of expected reply.
      * @return A future used to monitor the operation.
      */
@@ -420,7 +419,7 @@ public class Rpc implements Closeable {
             this.timeout = timeout;
             this.secret = secret;
             this.dispatcher = dispatcher;
-            this.client = Sasl.createSaslClient(new String[]{config.getSaslMechanism()},
+            this.client = Sasl.createSaslClient(new String[] { config.getSaslMechanism() },
                     null, SASL_PROTOCOL, SASL_REALM, config.getSaslOptions(), this);
         }
 
@@ -479,9 +478,9 @@ public class Rpc implements Closeable {
         public void handle(Callback[] callbacks) {
             for (Callback cb : callbacks) {
                 if (cb instanceof NameCallback) {
-                    ((NameCallback) cb).setName(clientId);
+                    ((NameCallback)cb).setName(clientId);
                 } else if (cb instanceof PasswordCallback) {
-                    ((PasswordCallback) cb).setPassword(secret.toCharArray());
+                    ((PasswordCallback)cb).setPassword(secret.toCharArray());
                 } else if (cb instanceof RealmCallback) {
                     RealmCallback rb = (RealmCallback) cb;
                     rb.setText(rb.getDefaultText());
@@ -492,15 +491,7 @@ public class Rpc implements Closeable {
         void sendHello(Channel c) throws Exception {
             byte[] hello = client.hasInitialResponse() ?
                     client.evaluateChallenge(new byte[0]) : new byte[0];
-            ChannelFuture channelFuture = null;
-            try {
-                channelFuture = c.writeAndFlush(new SaslMessage(clientId, hello));
-                System.out.println("++++++++++++++正常运行+++++++++++++");
-            } catch (Exception e) {
-                System.out.println("+++++++++++++++++++++++++++" + e.getMessage());
-                e.printStackTrace();
-            }
-            channelFuture.addListener(future -> {
+            c.writeAndFlush(new SaslMessage(clientId, hello)).addListener(future -> {
                 if (!future.isSuccess()) {
                     LOG.error("Failed to send hello to server", future.cause());
                     onError(future.cause());
