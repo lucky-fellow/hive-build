@@ -172,7 +172,7 @@
                 <artifactItem>
                   <groupId>com.google.guava</groupId>
                   <artifactId>guava</artifactId>
-                  <version>27.0-jre</version>
+                  <version>14.0.1</version>
                 </artifactItem>
               </artifactItems>
             </configuration>
@@ -185,7 +185,7 @@
         <configuration>
           <additionalClasspathElements>
             <!-- Note: wildcards don't work. Thankfully there's just one jar we care about. -->
-            <additionalClasspathElement>${project.build.directory}/dependency/guava-27.0-jre.jar</additionalClasspathElement>
+            <additionalClasspathElement>${project.build.directory}/dependency/guava-14.0.1.jar</additionalClasspathElement>
           </additionalClasspathElements>
           <classpathDependencyExcludes>
             <classpathDependencyExclude>com.google.guava:guava</classpathDependencyExclude>
